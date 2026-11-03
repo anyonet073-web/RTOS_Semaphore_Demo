@@ -1,0 +1,12 @@
+# Ignore the unrelated Terraform/Ansible demo folder
+semaphore-demo-main/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor folders
+.vscode/
+.idea/
+

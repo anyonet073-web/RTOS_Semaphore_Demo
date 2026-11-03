@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTOS Semaphore — Embedded Systems Demo</title>
+  <meta name="description" content="Interactive classroom demonstration of RTOS Race Conditions vs Semaphore Synchronization for Embedded Systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/terminal.css">
+</head>
+<body class="theme-slate">
+  <div id="app-container">
+
+    <!-- ── Top Header Bar ──────────────────────────────────────────────────── -->
+    <header class="app-header">
+      <div class="brand-title">⚡ RTOS Semaphore Lab</div>
+
+      <nav class="scenario-selector" aria-label="Scenario">
+        <button class="scenario-tab active" data-scenario="counter" id="tab-counter" title="Shared Counter [1]">Counter</button>
+        <button class="scenario-tab" data-scenario="bank" id="tab-bank" title="Bank Account [2]">Bank</button>
+        <button class="scenario-tab" data-scenario="uart" id="tab-uart" title="UART Serial [3]">UART</button>
+      </nav>
+
+      <div class="master-controls">
+        <button class="master-btn" id="master-play-btn" title="Play both [Space]">▶ Play</button>
+        <button class="master-btn" id="master-step-btn" title="Step both [→]">⏭ Step</button>
+        <button class="master-btn" id="master-reset-btn" title="Reset both [R]">↺ Reset</button>
+        <button class="icon-btn" id="sound-toggle-btn" title="Sound [S]">🔇</button>
+        <button class="icon-btn" id="theme-toggle-btn" title="Cycle theme [T]">🎨</button>
+        <button class="icon-btn" id="fullscreen-btn" title="Fullscreen [F]">⛶</button>
+      </div>
+    </header>
+
+    <!-- ── Scenario Description Banner ────────────────────────────────────── -->
+    <div class="scenario-banner" id="scenario-banner">
+      <span class="banner-icon">💡</span>
+      <span class="banner-text" id="banner-text">Loading scenario...</span>
+      <code class="banner-resource" id="banner-resource">volatile int shared_count = 100;</code>
+    </div>
+
+    <!-- ── Side-by-Side Panels ─────────────────────────────────────────────── -->
+    <main class="terminal-stage">
+
+      <!-- Terminal 1: Race Condition ──────────────────────────────────────── -->
+      <section class="asciinema-panel panel-race" id="terminal-panel-race" role="log" aria-label="Race Condition Terminal" aria-live="polite">
+        <div class="asciinema-header">
+          <div class="header-left">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="panel-name">Race Condition (No Sync)</span>
+          </div>
+          <span class="res-badge race-badge" id="resource-val-race">count: 100</span>
+        </div>
+
+        <div class="terminal-screen" id="terminal-screen-race"></div>
+
+        <!-- C Code Reference Panel -->
+        <div class="code-panel" id="code-panel-race">
+          <div class="code-panel-header">
+            <span class="code-label">// C Reference</span>
+            <span class="code-file">task_race.c</span>
+          </div>
+          <pre class="code-content" id="code-content-race">// Press Play or Step to begin...</pre>
+        </div>
+
+        <div class="asciinema-player-bar">
+          <button class="player-action-btn" id="play-btn-race" title="Play [Space]">▶</button>
+          <button class="player-action-btn player-step-btn" id="step-btn-race" title="Step [→]">⏭</button>
+          <div class="player-progress-container" id="progress-bar-race">
+            <div class="player-progress-bar">
+              <div class="player-progress-fill" id="progress-fill-race"></div>
+            </div>
+          </div>
+          <div class="player-time-display" id="time-display-race">00:00.0 / 00:08.0</div>
+          <div class="speed-btns">
+            <button class="speed-btn" data-player-speed="race" data-speed="0.5">½×</button>
+            <button class="speed-btn active" data-player-speed="race" data-speed="1">1×</button>
+            <button class="speed-btn" data-player-speed="race" data-speed="2">2×</button>
+          </div>
+          <span class="step-counter" id="step-count-race" title="Event progress">— / —</span>
+          <button class="player-action-btn" id="reset-btn-race" title="Reset">↺</button>
+        </div>
+      </section>
+
+      <!-- Terminal 2: Semaphore ───────────────────────────────────────────── -->
+      <section class="asciinema-panel panel-sem" id="terminal-panel-sem" role="log" aria-label="Semaphore Terminal" aria-live="polite">
+        <div class="asciinema-header">
+          <div class="header-left">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="panel-name">Semaphore (Synchronized)</span>
+          </div>
+          <span class="res-badge sem-badge" id="resource-val-sem">count: 100</span>
+        </div>
+
+        <div class="terminal-screen" id="terminal-screen-sem"></div>
+
+        <!-- C Code Reference Panel -->
+        <div class="code-panel" id="code-panel-sem">
+          <div class="code-panel-header">
+            <span class="code-label">// FreeRTOS API Reference</span>
+            <span class="code-file">task_sem.c</span>
+          </div>
+          <pre class="code-content" id="code-content-sem">// Press Play or Step to begin...</pre>
+        </div>
+
+        <div class="asciinema-player-bar">
+          <button class="player-action-btn" id="play-btn-sem" title="Play [Space]">▶</button>
+          <button class="player-action-btn player-step-btn" id="step-btn-sem" title="Step [→]">⏭</button>
+          <div class="player-progress-container" id="progress-bar-sem">
+            <div class="player-progress-bar">
+              <div class="player-progress-fill" id="progress-fill-sem"></div>
+            </div>
+          </div>
+          <div class="player-time-display" id="time-display-sem">00:00.0 / 00:08.0</div>
+          <div class="speed-btns">
+            <button class="speed-btn" data-player-speed="semaphore" data-speed="0.5">½×</button>
+            <button class="speed-btn active" data-player-speed="semaphore" data-speed="1">1×</button>
+            <button class="speed-btn" data-player-speed="semaphore" data-speed="2">2×</button>
+          </div>
+          <span class="step-counter" id="step-count-sem" title="Event progress">— / —</span>
+          <button class="player-action-btn" id="reset-btn-sem" title="Reset">↺</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── Keyboard Shortcut Hint Bar ──────────────────────────────────────── -->
+    <div class="kbd-hint-bar" aria-label="Keyboard shortcuts">
+      <span><kbd>Space</kbd> Play/Pause</span>
+      <span><kbd>→</kbd> Step</span>
+      <span><kbd>R</kbd> Reset</span>
+      <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Scenario</span>
+      <span><kbd>S</kbd> Sound</span>
+      <span><kbd>T</kbd> Theme</span>
+      <span><kbd>F</kbd> Fullscreen</span>
+    </div>
+
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/scenarios.js"></script>
+  <script src="js/asciinema-player.js"></script>
+  <script src="js/sync-controller.js"></script>
+</body>
+</html>
